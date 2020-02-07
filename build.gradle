@@ -37,6 +37,7 @@ dependencies {
 
     compile group: 'com.vaadin', name: 'vaadin-server', version: '8.9.4'
     compile group: 'org.rapidpm', name: 'rapidpm-vaadin-addons-modules-framework', version: '0.2.0'
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.0.0-alpha-3'
 
 }
 dependencyManagement {

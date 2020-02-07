@@ -4,7 +4,6 @@ import com.frontend.chat.domain.ChatUserDto;
 import com.frontend.chat.services.ChatService;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 
 public class FriendsListView extends VerticalLayout {
     private ChatService chatService = ChatService.getInstance();
@@ -15,9 +14,9 @@ public class FriendsListView extends VerticalLayout {
         this.contentView = contentView;
 
         grid.setColumns("name", "surname", "id");
-        grid.addColumn(new NativeButtonRenderer<>("conversation", val -> {
-            //dopisać resztę
-        }));
+//        grid.addColumn(new NativeButtonRenderer<>("conversation", val -> {
+//            //dopisać resztę
+//        }));
         add(grid);
         refresh();
     }

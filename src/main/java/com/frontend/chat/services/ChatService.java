@@ -1,10 +1,9 @@
 package com.frontend.chat.services;
 
 import com.frontend.chat.domain.ChatUserDto;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -67,8 +66,35 @@ public class ChatService {
         return (List<ChatUserDto>) restTemplate.exchange(uri, HttpMethod.PUT, entity, Long.class);
     }
 
-    public void login() {
+    public String getCurrentUsersmail() {
+        URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/v1/currentUser").build().encode().toUri();
+        return restTemplate.getForObject(uri, String.class);
+    }
 
+    public ChatUserDto getCurrentUser(String mail) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/v1/chat/search")
+                .queryParam("mail", mail).build().encode().toUri();
+        return restTemplate.getForObject(uri, ChatUserDto.class);
+    }
 
+    public Long getUsersId() {
+        String mail = getCurrentUsersmail();
+        ChatUserDto user = getCurrentUser(mail);
+        return user.getId();
+    }
+
+    public void login(String mail, String password) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/login").build().encode().toUri();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+        map.add("username",mail);
+
+        map.add("password",password);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity( uri, request , String.class );
     }
 }

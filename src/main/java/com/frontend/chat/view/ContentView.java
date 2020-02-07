@@ -5,13 +5,15 @@ import com.vaadin.flow.router.Route;
 import lombok.Getter;
 
 
-@Route("main")
+@Route(value = "contentView")
 @Getter
 public class ContentView extends HorizontalLayout {
+    private Long currentUserId;
     private FriendsListView friendsListView = new FriendsListView(this);
     private ConversationView conversationView = new ConversationView();
 
-    public ContentView() {
+    public ContentView(Long currentUserId) {
+        this.currentUserId = currentUserId;
         add(friendsListView,conversationView);
 
     }
