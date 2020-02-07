@@ -1,8 +1,6 @@
 package com.frontend.chat.services;
 
 import com.frontend.chat.domain.ChatUserDto;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Optional.ofNullable;
 
 public class ChatService {
     private final static String CHAT = "http://localhost:8083";
@@ -37,24 +36,9 @@ public class ChatService {
     }
 
 
-    public ChatUserDto newUser(ChatUserDto chatUserDto) throws JSONException {
+    public ChatUserDto newUser(ChatUserDto chatUserDto) {
         URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/v1/chat/new").build().encode().toUri();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-//        Gson gson = new Gson();
-//        String userJson = gson.toJson(chatUserDto);
-
-        JSONObject userJson = new JSONObject();
-        userJson.put("name", chatUserDto.getName());
-        userJson.put("surname", chatUserDto.getSurname());
-        userJson.put("mail", chatUserDto.getMail());
-        userJson.put("password", chatUserDto.getPassword());
-        userJson.put("city", chatUserDto.getCity());
-
-        HttpEntity<String> request = new HttpEntity<String>(userJson.toString(), headers);
-
-        return restTemplate.postForObject(uri, request, ChatUserDto.class);
+        return restTemplate.postForObject(uri, chatUserDto, ChatUserDto.class);
     }
 
     public void updateUser(ChatUserDto chatUserDto) {
@@ -64,10 +48,11 @@ public class ChatService {
 
     public List<ChatUserDto> getFriendsList(String param) {
         URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/v1/chat/" + param + "/friends").build().encode().toUri();
-        try{
-            ChatUserDto[] chatUserDtos = restTemplate.getForObject(uri, ChatUserDto[].class);
-            return asList(chatUserDtos);
-        }catch (RestClientException e ){
+        try {
+            ChatUserDto[] users = restTemplate.getForObject(uri, ChatUserDto[].class);
+            return asList(ofNullable(users).orElse(new ChatUserDto[0]));
+        } catch (RestClientException e) {
+            e.getMessage();
             return new ArrayList<>();
         }
     }
@@ -83,7 +68,7 @@ public class ChatService {
     }
 
     public void login() {
-    URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/login").build().encode().toUri();
+
 
     }
 }
