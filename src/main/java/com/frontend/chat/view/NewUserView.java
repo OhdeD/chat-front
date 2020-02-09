@@ -26,20 +26,16 @@ public class NewUserView extends VerticalLayout {
     private TextField city = new TextField("City:");
 
     private Button save = new Button("Create");
-    private Button start = new Button("start");
     private ChatUserDto chatUserDto = new ChatUserDto();
     private Binder binder = new Binder<>(ChatUserDto.class);
 
     public NewUserView() {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        start.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
-        add(name, surname, mail, password, city, save, start);
+        add(name, surname, mail, password, city, save);
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         setBinder();
         binder.bindInstanceFields(this);
-        save.addClickListener(event -> save());
-        start.addClickListener(event -> start.getUI().ifPresent(ui->ui.navigate("login")));
-
+        save.addClickListener(event -> { save(); save.getUI().ifPresent(ui->ui.navigate("login")); });
     }
 
 

@@ -7,12 +7,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 public class FriendsListView extends VerticalLayout {
     private ChatService chatService = ChatService.getInstance();
-    private ContentView contentView;
     private Grid<ChatUserDto> grid = new Grid<>(ChatUserDto.class);
 
-    public FriendsListView(ContentView contentView) {
-        this.contentView = contentView;
-
+    public FriendsListView() {
         grid.setColumns("name", "surname", "id");
 //        grid.addColumn(new NativeButtonRenderer<>("conversation", val -> {
 //            //dopisać resztę
