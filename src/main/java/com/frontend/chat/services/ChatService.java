@@ -1,6 +1,9 @@
 package com.frontend.chat.services;
 
 import com.frontend.chat.domain.ChatUserDto;
+import com.frontend.chat.domain.MessageDto;
+import com.frontend.chat.domain.RolesDto;
+import com.frontend.chat.mapper.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestClientException;
@@ -20,6 +23,7 @@ public class ChatService {
     private static ChatService chatService = null;
     public static ChatUserDto CURRENT_USER;
     private static final Logger LOGGER = LoggerFactory.getLogger(ChatService.class);
+    private Mapper mapper = Mapper.getInstance();
 
     private ChatService() {
     }
@@ -37,19 +41,19 @@ public class ChatService {
 
     public ChatUserDto newUser(ChatUserDto chatUserDto) {
         URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/new").build().encode().toUri();
-        return restTemplate.postForObject(uri, chatUserDto, ChatUserDto.class);
+        return mapper.mapStringDataOfUser(restTemplate.postForObject(uri, chatUserDto, ChatUserDto.class));
     }
 
     public void updateUser(ChatUserDto chatUserDto) {
-        URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/{userId}").build().encode().toUri();
+        URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/" + CURRENT_USER.getId()).build().encode().toUri();
         restTemplate.put(uri, chatUserDto);
     }
 
-    public List<ChatUserDto> getFriendsList(String param) {
-        URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/" + param + "/friends").build().encode().toUri();
+    public List<ChatUserDto> getFriendsList(ChatUserDto chatUserDto) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/" + chatUserDto.getId() + "/friends").build().encode().toUri();
         try {
             ChatUserDto[] users = restTemplate.getForObject(uri, ChatUserDto[].class);
-            return asList(ofNullable(users).orElse(new ChatUserDto[0]));
+            return mapper.mapListOfChatUsers(asList(ofNullable(users).orElse(new ChatUserDto[0])));
         } catch (RestClientException e) {
             e.getMessage();
             return new ArrayList<>();
@@ -62,7 +66,7 @@ public class ChatService {
         try {
             restTemplate.put(uri, ChatUserDto[].class);
             LOGGER.info("" + chatUserDto.getName() + " was added to " + CURRENT_USER.getName() + " friends list.");
-        }catch (Throwable e){
+        } catch (Throwable e) {
             e.getMessage();
         }
     }
@@ -72,8 +76,8 @@ public class ChatService {
         URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/login")
                 .queryParam("mail", mail)
                 .queryParam("password", password).build().encode().toUri();
-        CURRENT_USER = restTemplate.postForObject(uri, user, ChatUserDto.class);
-        return CURRENT_USER;
+        return restTemplate.postForObject(uri, user, ChatUserDto.class);
+
     }
 
     public List<ChatUserDto> searchUser(String name) {
@@ -81,11 +85,47 @@ public class ChatService {
                 .queryParam("name", name).build().encode().toUri();
         try {
             ChatUserDto[] table = restTemplate.getForObject(url, ChatUserDto[].class);
-            return asList(table);
-        } catch (Throwable e){
+            return mapper.mapListOfChatUsers(asList(table));
+        } catch (Throwable e) {
             LOGGER.info("There is no such user");
             e.getMessage();
             return new ArrayList<>();
         }
     }
+
+    public List<MessageDto> getConversation(ChatUserDto chatUserDto) {
+        URI url = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/" + CURRENT_USER.getId() + "/" + chatUserDto.getId()).build().encode().toUri();
+        try {
+            return asList(restTemplate.getForObject(url, MessageDto[].class));
+        } catch (Throwable e) {
+            LOGGER.warn("Couldn't get messages from: " + chatUserDto.getName());
+            e.getMessage();
+            return new ArrayList<>();
+        }
+    }
+
+    public String sendMessage(String message, ChatUserDto to) {
+        URI url = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/" + CURRENT_USER.getId() + "/" + to.getId())
+                .queryParam("message", message).build().encode().toUri();
+        return restTemplate.postForObject(url, message, String.class);
+
+    }
+
+    public void deleteFromFriendsList(ChatUserDto value) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/" + CURRENT_USER.getId() + "/deleteFriend")
+                .queryParam("user2Id", value.getId()).build().encode().toUri();
+        restTemplate.put(uri, ChatUserDto[].class);
+    }
+
+    public void logout() {
+        URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/logout").build().encode().toUri();
+        restTemplate.put(uri, CURRENT_USER);
+    }
+
+    public RolesDto getRole() {
+        URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/role")
+                .queryParam("userId", CURRENT_USER.getId()).build().encode().toUri();
+        return restTemplate.getForObject(uri, RolesDto.class);
+    }
+
 }

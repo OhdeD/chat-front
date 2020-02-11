@@ -64,6 +64,7 @@ public class LoginView extends VerticalLayout {
     private boolean login() {
         ChatUserDto user = (ChatUserDto) binder.getBean();
         ChatUserDto logged = chatService.login(user.getMail(), user.getPassword());
+        if (!logged.getName().equals("noSuchUser")) ChatService.CURRENT_USER = logged;
         return !logged.getName().equals("noSuchUser");
     }
 }

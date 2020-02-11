@@ -1,6 +1,5 @@
 package com.frontend.chat.view;
 
-
 import com.frontend.chat.domain.ChatUserDto;
 import com.frontend.chat.services.ChatService;
 import com.vaadin.flow.component.button.Button;
@@ -8,19 +7,18 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
-import com.vaadin.ui.GridLayout;
-
 
 public class FriendsSearcherView extends VerticalLayout {
     private ChatService chatService = ChatService.getInstance();
-
     private TextField search = new TextField("Search friends...");
     private Grid<ChatUserDto> grid = new Grid<>(ChatUserDto.class);
     private Button addFriend = new Button("Add a friend");
-    private GridLayout gridLayout = new GridLayout();
+    private FriendsListView friendsListView = new FriendsListView(new ConversationView());
+    private int counter = 0;
 
+    public FriendsSearcherView(FriendsListView friendsListView) {
+        this.friendsListView = friendsListView;
 
-    public FriendsSearcherView() {
         grid.setColumns("name", "surname", "city");
         grid.setWidth("400px");
         add(search, addFriend, grid);
@@ -32,22 +30,26 @@ public class FriendsSearcherView extends VerticalLayout {
         search.addValueChangeListener(e -> {
             if (search.getValue().length() > 1) {
                 search();
-            }else {
+            } else {
                 grid.getDataProvider().refreshAll();
             }
         });
 
         grid.asSingleSelect().addValueChangeListener(event -> {
-            if (!addFriend.isVisible()) {
+            if (counter % 2 == 0) {
                 revealedAddButton();
-                addFriend.addClickListener(e -> chatService.addFriendToFriendsList(grid.asSingleSelect().getValue()));
-                grid.asSingleSelect().addValueChangeListener(e -> {
-                    hideAddButton();
-                });
-
+                counter++;
+            } else {
+                hideAddButton();
+                counter++;
             }
         });
 
+        addFriend.addClickListener(e -> {
+            chatService.addFriendToFriendsList(grid.asSingleSelect().getValue());
+            friendsListView.refresh();
+            hideAddButton();
+        });
     }
 
     private void revealedAddButton() {
