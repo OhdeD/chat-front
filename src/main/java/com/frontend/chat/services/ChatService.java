@@ -6,6 +6,7 @@ import com.frontend.chat.domain.RolesDto;
 import com.frontend.chat.mapper.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -92,13 +93,23 @@ public class ChatService {
             return new ArrayList<>();
         }
     }
-
+    public ChatUserDto findCurrentUser() {
+        URI url = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/" + CURRENT_USER.getId()).build().encode().toUri();
+        try {
+            ChatUserDto user = restTemplate.getForObject(url, ChatUserDto.class);
+            return mapper.mapStringDataOfUser(user);
+        } catch (Throwable e) {
+            LOGGER.info("There is no such user");
+            e.getMessage();
+            return new ChatUserDto();
+        }
+    }
     public List<MessageDto> getConversation(ChatUserDto chatUserDto) {
-        URI url = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/" + CURRENT_USER.getId() + "/" + chatUserDto.getId()).build().encode().toUri();
+        URI url = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/" + CURRENT_USER.getId().toString() + "/" + chatUserDto.getId()).build().encode().toUri();
         try {
             return asList(restTemplate.getForObject(url, MessageDto[].class));
         } catch (Throwable e) {
-            LOGGER.warn("Couldn't get messages from: " + chatUserDto.getName());
+            LOGGER.warn("Couldn't get messages from: " + chatUserDto.toString());
             e.getMessage();
             return new ArrayList<>();
         }
@@ -114,9 +125,11 @@ public class ChatService {
     public void deleteFromFriendsList(ChatUserDto value) {
         URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/" + CURRENT_USER.getId() + "/deleteFriend")
                 .queryParam("user2Id", value.getId()).build().encode().toUri();
-        restTemplate.put(uri, ChatUserDto[].class);
+        restTemplate.put(uri, ChatUserDto.class);
+        LOGGER.info("User: " + value.toString() + " deleted from friends list");
     }
 
+    @Scheduled(fixedDelay = 10800000)
     public void logout() {
         URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/logout").build().encode().toUri();
         restTemplate.put(uri, CURRENT_USER);
@@ -128,4 +141,10 @@ public class ChatService {
         return restTemplate.getForObject(uri, RolesDto.class);
     }
 
+
+    public void deleteMessage(MessageDto clickedMessage) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/chat/" + CURRENT_USER.getId())
+                .queryParam("messageId", clickedMessage.getId()).build().encode().toUri();
+        restTemplate.delete(uri);
+    }
 }

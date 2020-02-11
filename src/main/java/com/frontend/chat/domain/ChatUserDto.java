@@ -16,4 +16,12 @@ public class ChatUserDto {
     private String city;
     private boolean logged;
     private FriendsListDto friendsListDto;
+
+    @Override
+    public String toString() {
+        return "ChatUserDto{" +
+                "name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                '}';
+    }
 }

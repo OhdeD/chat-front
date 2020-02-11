@@ -39,7 +39,7 @@ public class MainView extends VerticalLayout {
         logout.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         logout.addClickListener(a -> {
             chatService.logout();
-            Notification.show("User " + ChatService.CURRENT_USER.getName() + "logged out");
+            Notification.show("User " + ChatService.CURRENT_USER.getName() + " logged out");
             logout.getUI().ifPresent(ui -> ui.navigate("login"));
         });
         admin.addThemeVariants(ButtonVariant.LUMO_CONTRAST);

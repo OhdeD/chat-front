@@ -2,12 +2,16 @@ package com.frontend.chat.mapper;
 
 import com.frontend.chat.domain.ChatUserDto;
 import com.frontend.chat.domain.FriendsListDto;
+import com.frontend.chat.domain.MessageDto;
+import com.frontend.chat.domain.MessageUpgrated;
+import com.frontend.chat.services.ChatService;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Mapper {
     private static Mapper mapper = null;
+    private ChatService chatService = ChatService.getInstance();
 
     private Mapper() {
     }
@@ -45,14 +49,36 @@ public class Mapper {
     }
 
     public String mapLetters(String s) {
-        String firstLetter = s.substring(0,1);
+        String firstLetter = s.substring(0, 1);
         String restOfName = s.substring(1).toLowerCase();
         return "" + firstLetter + restOfName;
     }
 
-    public List<ChatUserDto> mapListOfChatUsers(List<ChatUserDto> a){
+    public List<ChatUserDto> mapListOfChatUsers(List<ChatUserDto> a) {
         return a.stream()
                 .map(this::mapStringDataOfUser)
                 .collect(Collectors.toList());
+    }
+
+    public MessageUpgrated mapMessageToStrings(MessageDto messageDto) {
+        String m = "";
+        if (messageDto.getSenderId().equals(ChatService.CURRENT_USER.getId())) {
+            m = "*";
+        } else {
+            m = messageDto.getSenderId().toString();
+        }
+        String day = messageDto.getSendingDate().toString().substring(0,10);
+        String hour = messageDto.getSendingDate().toString().substring(11,19);
+
+        MessageUpgrated upgratedMessage = MessageUpgrated.builder()
+                .id(messageDto.getId())
+                .message(messageDto.getMessage())
+                .conversationId(messageDto.getConversationId())
+                .read(messageDto.isRead())
+                .receiverId(messageDto.getReceiverId())
+                .myMessage(m)
+                .sent(day + " " + hour)
+                .build();
+        return upgratedMessage;
     }
 }

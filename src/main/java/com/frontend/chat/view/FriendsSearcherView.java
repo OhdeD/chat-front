@@ -4,6 +4,7 @@ import com.frontend.chat.domain.ChatUserDto;
 import com.frontend.chat.services.ChatService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -14,7 +15,6 @@ public class FriendsSearcherView extends VerticalLayout {
     private Grid<ChatUserDto> grid = new Grid<>(ChatUserDto.class);
     private Button addFriend = new Button("Add a friend");
     private FriendsListView friendsListView = new FriendsListView(new ConversationView());
-    private int counter = 0;
 
     public FriendsSearcherView(FriendsListView friendsListView) {
         this.friendsListView = friendsListView;
@@ -35,21 +35,18 @@ public class FriendsSearcherView extends VerticalLayout {
             }
         });
 
-        grid.asSingleSelect().addValueChangeListener(event -> {
-            if (counter % 2 == 0) {
+        grid.asSingleSelect( ).addValueChangeListener(event -> {
                 revealedAddButton();
-                counter++;
-            } else {
-                hideAddButton();
-                counter++;
-            }
         });
 
         addFriend.addClickListener(e -> {
             chatService.addFriendToFriendsList(grid.asSingleSelect().getValue());
             friendsListView.refresh();
+            Notification.show("Friend added");
             hideAddButton();
+            search.clear();
         });
+
     }
 
     private void revealedAddButton() {

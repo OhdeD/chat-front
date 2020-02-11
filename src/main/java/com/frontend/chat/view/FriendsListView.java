@@ -27,26 +27,31 @@ public class FriendsListView extends VerticalLayout {
         delete.setVisible(false);
         delete.setText("Delete");
         delete.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        grid.setColumns("name", "surname");
+
+        grid.setColumns("name", "surname", "logged");
         grid.setWidth("400px");
+
         add(label, grid, delete);
+
         horizontalLayout.add(this, conversationView);
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         refresh();
 
         grid.asSingleSelect().addValueChangeListener(event -> {
             ChatUserDto u = grid.asSingleSelect().getValue();
-            conversationView.refreshConversation(u);
+            conversationView.refresh(u);
             delete.setVisible(true);
-
-            delete.addClickListener(e -> {
-                chatService.deleteFromFriendsList(u);
-                refresh();
-                delete.setVisible(false);
-                conversationView.refreshConversation(null);
-                Notification.show("User " + u.getName() + " deleted" );
-            });
         });
+        delete.addClickListener(e -> {
+            ChatUserDto u = grid.asSingleSelect().getValue();
+            chatService.deleteFromFriendsList(u);
+            delete.setVisible(false);
+            refresh();
+            conversationView.refreshEmpty();
+            LOGGER.info("User " + u.toString() + " deleted");
+            Notification.show("User " + u.getName() + " deleted");
+        });
+
     }
 
     public void refresh() {
