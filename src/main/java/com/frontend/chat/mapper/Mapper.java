@@ -4,14 +4,12 @@ import com.frontend.chat.domain.ChatUserDto;
 import com.frontend.chat.domain.FriendsListDto;
 import com.frontend.chat.domain.MessageDto;
 import com.frontend.chat.domain.MessageUpgrated;
-import com.frontend.chat.services.ChatService;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Mapper {
     private static Mapper mapper = null;
-    private ChatService chatService = ChatService.getInstance();
 
     private Mapper() {
     }
@@ -59,18 +57,12 @@ public class Mapper {
                 .map(this::mapStringDataOfUser)
                 .collect(Collectors.toList());
     }
-
-    public MessageUpgrated mapMessageToStrings(MessageDto messageDto) {
+    public MessageUpgrated mapMessageToStrings(MessageDto messageDto, ChatUserDto chatUserDto) {
         String m = "";
-        if (messageDto.getSenderId().equals(ChatService.CURRENT_USER.getId())) {
-            m = "*";
-        } else {
-            m = messageDto.getSenderId().toString();
-        }
+        if (messageDto.getSenderId().equals(chatUserDto.getId()))   m = "*";
         String day = messageDto.getSendingDate().toString().substring(0,10);
         String hour = messageDto.getSendingDate().toString().substring(11,19);
-
-        MessageUpgrated upgratedMessage = MessageUpgrated.builder()
+        return MessageUpgrated.builder()
                 .id(messageDto.getId())
                 .message(messageDto.getMessage())
                 .conversationId(messageDto.getConversationId())
@@ -79,6 +71,11 @@ public class Mapper {
                 .myMessage(m)
                 .sent(day + " " + hour)
                 .build();
-        return upgratedMessage;
+    }
+
+    public List<MessageUpgrated> mapMessageToStringsList(List<MessageDto> list, ChatUserDto chatUserDto) {
+        return list.stream()
+                .map(a -> mapMessageToStrings(a,chatUserDto))
+                .collect(Collectors.toList());
     }
 }

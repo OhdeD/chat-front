@@ -37,6 +37,7 @@ public class NamedayService {
             return "Read the stars by yourself.. I'm out.";
         }
     }
+
     public String getTomorrowNames(){
         URI uri = UriComponentsBuilder.fromHttpUrl(CHAT + "/tomorrow").build().encode().toUri();
         try{
@@ -47,6 +48,4 @@ public class NamedayService {
             return "Read the stars by yourself.. I'm out.";
         }
     }
-
-
 }

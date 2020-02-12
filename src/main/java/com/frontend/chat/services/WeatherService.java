@@ -39,6 +39,7 @@ public class WeatherService {
        try {
            return restTemplate.getForObject(uri,AccuWeatherDto.class);
        }catch (HttpServerErrorException.InternalServerError error){
+           LOGGER.warn("Accu Weather server overloaded. No weather available");
            AccuWeatherDto accuWeatherDto = new AccuWeatherDto();
            accuWeatherDto.setText("Sorry, our fairy hasn't determined the weather yet..");
            accuWeatherDto.setTemperature(new Temperature(new Metric( 1000.00 )));

@@ -33,7 +33,6 @@ public class WeatherAndNamedayView extends HorizontalLayout {
 
     public String setWeateherText() {
         AccuWeatherDto accuWeather = weatherService.getWeather();
-
         return "" + accuWeather.getText().toUpperCase() +
                 " with temperature: " +
                 accuWeather.getTemperature().getMetric().getValue() +
@@ -43,5 +42,4 @@ public class WeatherAndNamedayView extends HorizontalLayout {
     public String setLocalizationText() {
         return ChatService.CURRENT_USER.getCity().toUpperCase();
     }
-
 }

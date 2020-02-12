@@ -1,7 +1,7 @@
 package com.frontend.chat.view;
 
 import com.frontend.chat.domain.ChatUserDto;
-import com.frontend.chat.domain.MessageDto;
+import com.frontend.chat.domain.MessageUpgrated;
 import com.frontend.chat.services.ChatService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class ConversationView extends VerticalLayout {
     private ChatService chatService = ChatService.getInstance();
-    private Grid<MessageDto> grid = new Grid<>(MessageDto.class);
+    private Grid<MessageUpgrated> grid = new Grid<>(MessageUpgrated.class);
     private static ChatUserDto OTHER_PARTICIPANT = new ChatUserDto();
     private TextField messageField = new TextField();
     private Button send = new Button("Send");
@@ -25,11 +25,9 @@ public class ConversationView extends VerticalLayout {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConversationView.class);
     private Button delM = new Button("Delete selected");
 
-
     public ConversationView() {
-        grid.setColumns("message", "sent");
+        grid.setColumns("message", "sent", "myMessage");
         grid.setWidth("600px");
-
         messageField.setWidth("500px");
         messageField.setHeight("125px");
         messageField.setPlaceholder("Wright a message");
@@ -38,29 +36,22 @@ public class ConversationView extends VerticalLayout {
         horizontalLayout.add(messageField, send);
         horizontalLayout.setVisible(false);
         horizontalLayout.setWidthFull();
-
         add(grid, delM, horizontalLayout);
-
         refreshEmpty();
-
         send.addClickListener(event -> {
             sendMessage(messageField.getValue(), OTHER_PARTICIPANT);
             refresh(OTHER_PARTICIPANT);
             messageField.clear();
         });
-
         grid.asSingleSelect().addValueChangeListener(event -> {
-            MessageDto me = grid.asSingleSelect().getValue();
-
+            MessageUpgrated me = grid.asSingleSelect().getValue();
             delM.addClickListener(e -> {
                 chatService.deleteMessage(me);
                 LOGGER.info("Message deleted");
                 Notification.show("Message deleted");
                 refresh(OTHER_PARTICIPANT);
             });
-
         });
-
     }
 
     public void sendMessage(String value, ChatUserDto to) {
@@ -84,5 +75,4 @@ public class ConversationView extends VerticalLayout {
         horizontalLayout.setVisible(false);
         delM.setVisible(false);
     }
-
 }

@@ -13,11 +13,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.GridLayout;
 
-
 @Route(value = "login")
 public class LoginView extends VerticalLayout {
     private ChatService chatService = ChatService.getInstance();
-
     @PropertyId("mail")
     private TextField mail = new TextField("Mail:");
     @PropertyId("password")
@@ -27,20 +25,15 @@ public class LoginView extends VerticalLayout {
     private Button register = new Button("Register");
     private ChatUserDto chatUserDto = new ChatUserDto();
     private Binder binder = new Binder<>(ChatUserDto.class);
-
     GridLayout grid = new GridLayout(3, 3);
 
     public LoginView() {
-
         grid.setWidth(400, Sizeable.UNITS_PIXELS);
         grid.setHeight(400, Sizeable.UNITS_PIXELS);
-
         login.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         register.addThemeVariants(ButtonVariant.LUMO_SMALL);
         add(noSuchUser, mail, password, login, register);
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
-
-
         noSuchUser.setVisible(false);
         setBinder();
         binder.bindInstanceFields(this);

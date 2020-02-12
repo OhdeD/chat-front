@@ -12,7 +12,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class FriendsListView extends VerticalLayout {
     private ConversationView conversationView = new ConversationView();
     private ChatService chatService = ChatService.getInstance();
@@ -27,12 +26,9 @@ public class FriendsListView extends VerticalLayout {
         delete.setVisible(false);
         delete.setText("Delete");
         delete.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-
         grid.setColumns("name", "surname", "logged");
         grid.setWidth("400px");
-
         add(label, grid, delete);
-
         horizontalLayout.add(this, conversationView);
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         refresh();
@@ -51,7 +47,6 @@ public class FriendsListView extends VerticalLayout {
             LOGGER.info("User " + u.toString() + " deleted");
             Notification.show("User " + u.getName() + " deleted");
         });
-
     }
 
     public void refresh() {

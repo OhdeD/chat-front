@@ -11,8 +11,6 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.PropertyId;
 import com.vaadin.flow.router.Route;
 
-
-
 @Route("update_user")
 public class UpdateUserView extends VerticalLayout {
     private ChatService chatService = ChatService.getInstance();
@@ -26,7 +24,6 @@ public class UpdateUserView extends VerticalLayout {
     private TextField password = new TextField("Password:");
     @PropertyId("city")
     private TextField city = new TextField("City:");
-
     private Button save = new Button("Save changes");
     private ChatUserDto chatUserDto = new ChatUserDto();
     private Binder binder = new Binder<>(ChatUserDto.class);
@@ -53,5 +50,4 @@ public class UpdateUserView extends VerticalLayout {
         binder.setBean(null);
         ChatService.CURRENT_USER = chatService.findCurrentUser();
     }
-
 }

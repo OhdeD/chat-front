@@ -10,7 +10,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
-
 @Route("mainView")
 public class MainView extends VerticalLayout {
     private ContentView contentView = new ContentView();
@@ -25,7 +24,7 @@ public class MainView extends VerticalLayout {
 
     public MainView() {
         add(weatherAndNamedayView, admin, contentView, logout, profile);
-        if (!chatService.getRole().getRole().equals("ADMIN")) admin.setVisible(false);
+        if (!chatService.getRole(ChatService.CURRENT_USER).getRole().equals("ADMIN")) admin.setVisible(false);
         setAlignItems(Alignment.CENTER);
         profile.add(currentData, changeData);
         profile.setAlignItems(Alignment.END);
@@ -44,8 +43,5 @@ public class MainView extends VerticalLayout {
         });
         admin.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
         admin.addClickListener(a -> admin.getUI().ifPresent(ui ->ui.navigate("adminPanel")));
-
     }
-
-
 }
