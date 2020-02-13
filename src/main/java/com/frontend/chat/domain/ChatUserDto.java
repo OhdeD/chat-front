@@ -15,7 +15,7 @@ public class ChatUserDto {
     private String password;
     private String city;
     private boolean logged;
-    private FriendsListDto friendsListDto;
+    private Long friendsListIdDto;
 
     @Override
     public String toString() {

@@ -1,7 +1,6 @@
 package com.frontend.chat.mapper;
 
 import com.frontend.chat.domain.ChatUserDto;
-import com.frontend.chat.domain.FriendsListDto;
 import com.frontend.chat.domain.MessageDto;
 import com.frontend.chat.domain.MessageUpgrated;
 
@@ -34,16 +33,7 @@ public class Mapper {
                 .password(chatUserDto.getPassword())
                 .city(mapLetters(chatUserDto.getCity()))
                 .logged(chatUserDto.isLogged())
-                .friendsListDto(new FriendsListDto(chatUserDto.getFriendsListDto().getId(), chatUserDto.getFriendsListDto().getFriends().stream()
-                        .map(a -> ChatUserDto.builder()
-                                .id(a.getId())
-                                .name(mapLetters(a.getName()))
-                                .surname(mapLetters(a.getSurname()))
-                                .mail(a.getMail())
-                                .password(a.getPassword())
-                                .city(mapLetters(a.getCity()))
-                                .logged(a.isLogged()).build())
-                        .collect(Collectors.toList()))).build();
+                .friendsListIdDto(chatUserDto.getFriendsListIdDto()).build();
     }
 
     public String mapLetters(String s) {
