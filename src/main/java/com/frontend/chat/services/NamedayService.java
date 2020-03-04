@@ -10,7 +10,7 @@ import java.net.URI;
 public class NamedayService {
     private static NamedayService namedayService = null;
     private RestTemplate restTemplate = new RestTemplate();
-    private static final String CHAT = "https://floating-sea-70446.herokuapp.com/v1/nameday/";
+    private static final String CHAT = "https://floating-sea-70446.herokuapp.com/v1/nameday";
     private static final Logger LOGGER = LoggerFactory.getLogger(NamedayService.class);
 
     private NamedayService() {

@@ -17,9 +17,9 @@ public class WeatherAndNamedayView extends HorizontalLayout {
         Label weather = new Label();
         weather.setText("Today's weather for Your city:\n" + setWeateherText());
         Label todayNames = new Label();
-        todayNames.setText("Today we celebrate: \n" + getTodayNames() + " name day!");
+//        todayNames.setText("Today we celebrate: \n" + getTodayNames() + " name day!");
         Label tomorrowNames = new Label();
-        tomorrowNames.setText("Tomorrow we'll celebrate: \n" + getTomorrowNames() + " name day!");
+//        tomorrowNames.setText("Tomorrow we'll celebrate: \n" + getTomorrowNames() + " name day!");
         add(city, weather, todayNames, tomorrowNames);
     }
 
