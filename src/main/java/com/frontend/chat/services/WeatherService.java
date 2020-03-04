@@ -14,7 +14,7 @@ import java.net.URI;
 public class WeatherService {
     private RestTemplate restTemplate = new RestTemplate();
     private AccuWeatherDto accuWeatherDto = new AccuWeatherDto();
-    private final static String CHAT = "http://localhost:8083/v1/chat/";
+    private final static String CHAT = "https://floating-sea-70446.herokuapp.com/v1/chat/";
     private ChatService chatService = ChatService.getInstance();
     private static WeatherService weatherService = null;
     private static final Logger LOGGER = LoggerFactory.getLogger(WeatherService.class);
