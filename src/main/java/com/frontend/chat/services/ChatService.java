@@ -21,7 +21,7 @@ import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 
 public class ChatService {
-    private final static String CHAT = "http://localhost:8083/v1";
+    private final static String CHAT = "https://floating-sea-70446.herokuapp.com/v1";
     private RestTemplate restTemplate = new RestTemplate();
     private static ChatService chatService = null;
     public static ChatUserDto CURRENT_USER;
